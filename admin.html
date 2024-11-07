@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home - Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-8">Admin Panel</h1>
+
+        <div class="bg-white shadow rounded-lg p-6">
+            <h2 class="text-xl font-semibold mb-4">Add RFID Tag</h2>
+            <form id="addRFIDForm">
+                <div class="mb-4">
+                    <label for="tagId" class="block text-gray-700 text-sm font-bold mb-2">
+                        Tag ID
+                    </label>
+                    <input type="text" id="tagId" name="tagId" required
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                </div>
+                <div class="mb-4">
+                    <label for="userId" class="block text-gray-700 text-sm font-bold mb-2">
+                        User ID
+                    </label>
+                    <input type="text" id="userId" name="userId" required
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                </div>
+                <button type="submit"
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Add RFID Tag
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = 'login.html';
+        }
+
+        document.getElementById('addRFIDForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const tagId = document.getElementById('tagId').value;
+            const userId = document.getElementById('userId').value;
+
+            try {
+                const response = await fetch('http://localhost:3000/admin/rfid', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ tagId, userId })
+                });
+
+                if (response.ok) {
+                    alert('RFID tag added successfully');
+                    document.getElementById('tagId').value = '';
+                    document.getElementById('userId').value = '';
+                } else {
+                    throw new Error('Failed to add RFID tag');
+                }
+            } catch (error) {
+                console.error('Error adding RFID tag:', error);
+                alert('Failed to add RFID tag');
+            }
+        });
+    </script>
+</body>
+
+</html>

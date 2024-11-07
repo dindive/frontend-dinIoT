@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home IoT Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#8B5CF6',
+                        danger: '#EF4444',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-100">
+    <div class="min-h-screen">
+        <nav class="bg-white shadow-lg">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex">
+                        <div class="flex-shrink-0 flex items-center">
+                            <img class="h-12 w-auto" src="./diniot.jpg" alt="Smart Home">
+                        </div>
+                        <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                            <a href="#"
+                                class="border-primary text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                                Dashboard
+                            </a>
+                            <a href="#"
+                                class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                                Devices
+                            </a>
+                            <a href="#"
+                                class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                                Analytics
+                            </a>
+                        </div>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:items-center">
+                        <button type="button"
+                            class="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                            <span class="sr-only">View notifications</span>
+                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <div class="px-4 py-6 sm:px-0">
+                <h1 class="text-3xl font-bold text-gray-900 mb-6">Smart Home Dashboard</h1>
+
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    <!-- Door Status Card -->
+                    <div class="bg-white overflow-hidden shadow rounded-lg">
+                        <div class="px-4 py-5 sm:p-6">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 bg-primary rounded-md p-3">
+                                    <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+                                    </svg>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-gray-500 truncate">
+                                            Door Status
+                                        </dt>
+                                        <dd class="flex items-baseline">
+                                            <div class="text-2xl font-semibold text-gray-900" id="doorStatus">
+                                                Loading...
+                                            </div>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-4 sm:px-6">
+                            <div class="text-sm">
+                                <button id="toggleDoor" class="font-medium text-primary hover:text-primary-dark">
+                                    Toggle Door
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Light Status Card -->
+                    <div class="bg-white overflow-hidden shadow rounded-lg">
+                        <div class="px-4 py-5 sm:p-6">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 bg-secondary rounded-md p-3">
+                                    <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                    </svg>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-gray-500 truncate">
+                                            Light Status
+                                        </dt>
+                                        <dd class="flex items-baseline">
+                                            <div class="text-2xl font-semibold text-gray-900" id="lightStatus">
+                                                Loading...
+                                            </div>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-4 sm:px-6">
+                            <div class="text-sm">
+                                <button id="toggleLight" class="font-medium text-secondary hover:text-secondary-dark">
+                                    Toggle Light
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gas Level Card -->
+                    <div class="bg-white overflow-hidden shadow rounded-lg">
+                        <div class="px-4 py-5 sm:p-6">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 bg-accent rounded-md p-3">
+                                    <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                    </svg>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-gray-500 truncate">
+                                            Gas Level
+                                        </dt>
+                                        <dd class="flex items-baseline">
+                                            <div class="text-2xl font-semibold text-gray-900" id="gasLevel">
+                                                Loading...
+                                            </div>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-4 sm:px-6">
+                            <div class="text-sm">
+                                <a href="#" class="font-medium text-accent hover:text-accent-dark">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="mt-8 bg-white shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <h2 class="text-lg font-medium text-gray-900 mb-4">Energy Consumption</h2>
+                        <canvas id="energyChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+
+                <!-- Notifications Section -->
+                <div class="mt-8 bg-white shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <h2 class="text-lg font-medium text-gray-900 mb-4">Recent Notifications</h2>
+                        <ul class="divide-y divide-gray-200" id="notificationsList">
+                            <!-- Notifications will be dynamically added here -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000'; // Replace with your server URL
+        const doorStatus = document.getElementById('doorStatus');
+        const lightStatus = document.getElementById('lightStatus');
+        const gasLevel = document.getElementById('gasLevel');
+        const toggleDoor = document.getElementById('toggleDoor');
+        const toggleLight = document.getElementById('toggleLight');
+        const notificationsList = document.getElementById('notificationsList');
+
+        // Function to get authentication token (you need to implement this based on your login system)
+        function getAuthToken() {
+            token = localStorage.getItem('token');
+            console.log(token)
+            return token
+        }
+
+        // Function to make authenticated API calls
+        async function apiCall(endpoint, method = 'GET', body = null) {
+            const token = getAuthToken();
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            };
+
+            const options = {
+                method,
+                headers,
+                body: body ? JSON.stringify(body) : null
+            };
+
+            try {
+                const response = await fetch(`${API_URL}${endpoint}`, options);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error(`Error calling ${endpoint}:`, error);
+                throw error;
+            }
+        }
+
+        // Function to update door status
+        async function updateDoorStatus() {
+            try {
+                const data = await apiCall('/door/status');
+                doorStatus.textContent = data.status;
+            } catch (error) {
+                console.error('Error updating door status:', error);
+                doorStatus.textContent = 'Error';
+            }
+        }
+
+        // Function to update light status
+        async function updateLightStatus() {
+            try {
+                const data = await apiCall('/light/status');
+                lightStatus.textContent = data.status;
+            } catch (error) {
+                console.error('Error updating light status:', error);
+                lightStatus.textContent = 'Error';
+            }
+        }
+
+        // Function to update gas level
+        async function updateGasLevel() {
+            try {
+                const data = await apiCall('/sensors/gas');
+                const level = data[0].value; // Assuming the API returns an array with the latest reading
+                gasLevel.textContent = level < 500 ? 'Normal' : (level < 800 ? 'Elevated' : 'High');
+                gasLevel.className = level < 500 ? 'text-2xl font-semibold text-gray-900' :
+                    (level < 800 ? 'text-2xl font-semibold text-yellow-600' : 'text-2xl font-semibold text-red-600');
+                if (level >= 800) {
+                    addNotification('High gas levels detected!');
+                }
+            } catch (error) {
+                console.error('Error updating gas level:', error);
+                gasLevel.textContent = 'Error';
+            }
+        }
+
+        // Function to toggle door
+        async function toggleDoorState() {
+            try {
+                const data = await apiCall('/door/toggle', 'POST');
+                updateDoorStatus();
+                addNotification(`Door ${data.status}`);
+            } catch (error) {
+                console.error('Error toggling door:', error);
+                addNotification('Error toggling door');
+            }
+        }
+
+        // Function to toggle light
+        async function toggleLightState() {
+            try {
+                const data = await apiCall('/light/toggle', 'POST');
+                updateLightStatus();
+                addNotification(`Light turned ${data.status}`);
+            } catch (error) {
+                console.error('Error toggling light:', error);
+                addNotification('Error toggling light');
+            }
+        }
+
+        function addNotification(message) {
+            const li = document.createElement('li');
+            li.className = 'py-4';
+            li.innerHTML = `
+            <div class="flex space-x-3">
+                <svg class="h-6 w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+                <div class="flex-1 space-y-1">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-medium">${message}</h3>
+                        <p class="text-sm text-gray-500">${new Date().toLocaleTimeString()}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+            notificationsList.prepend(li);
+        }
+
+        // Event listeners
+        toggleDoor.addEventListener('click', toggleDoorState);
+        toggleLight.addEventListener('click', toggleLightState);
+
+        // Initial update and periodic updates
+        updateDoorStatus();
+        updateLightStatus();
+        updateGasLevel();
+
+        setInterval(() => {
+            updateDoorStatus();
+            updateLightStatus();
+            updateGasLevel();
+        }, 5000);
+
+        // Energy consumption chart
+        const ctx = document.getElementById('energyChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+                datasets: [{
+                    label: 'Energy Consumption (kWh)',
+                    data: [5, 3, 4, 7, 6, 5],
+                    borderColor: 'rgb(59, 130, 246)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Function to update energy consumption data (you need to implement the API endpoint)
+        async function updateEnergyConsumption() {
+            try {
+                const data = await apiCall('/energy/consumption');
+                // Update the chart with new data
+                // This is a placeholder and needs to be implemented based on your API response
+            } catch (error) {
+                console.error('Error updating energy consumption:', error);
+            }
+        }
+
+        // Call updateEnergyConsumption periodically
+        setInterval(updateEnergyConsumption, 60000); // Update every minute
+    </script>
+</body>
+
+</html>
